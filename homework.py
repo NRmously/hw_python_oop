@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 
 
 @dataclass
@@ -10,14 +10,14 @@ class InfoMessage:
     distance: float
     speed: float
     calories: float
+    TRAINING_INFO: str = ('Тип тренировки: {training_type}; '
+                          'Длительность: {duration:.3f} ч.; '
+                          'Дистанция: {distance:.3f} км; '
+                          'Ср. скорость: {speed:.3f} км/ч; '
+                          'Потрачено ккал: {calories:.3f}.')
 
     def get_message(self) -> str:
-        message = (f'Тип тренировки: {self.training_type}; '
-                   f'Длительность: {self.duration:.3f} ч.; '
-                   f'Дистанция: {self.distance:.3f} км; '
-                   f'Ср. скорость: {self.speed:.3f} км/ч; '
-                   f'Потрачено ккал: {self.calories:.3f}.')
-        return message
+        return self.TRAINING_INFO.format(**asdict(self))
 
 
 @dataclass
@@ -47,7 +47,7 @@ class Training:
     def get_spent_calories(self) -> float:
         """Получить количество затраченных калорий."""
 
-        raise NotImplementedError('Метод переопределен в наследниках')
+        raise NotImplementedError('Необходимо переопределить метод')
 
     def show_training_info(self) -> InfoMessage:
         """Вернуть информационное сообщение о выполненной тренировке."""
@@ -118,16 +118,15 @@ class Swimming(Training):
         return mean_speed
 
 
-def read_package(workout_type: str, data: list) -> Training:
+TYPE_OF_TRAININGS: dict[str, type[Training]] = {'SWM': Swimming,
+                                                'RUN': Running,
+                                                'WLK': SportsWalking}
+
+
+def read_package(workout_type: str, data: list[float]) -> Training:
     """Прочитать данные полученные от датчиков."""
 
-    type_of_training: dict = {
-        'SWM': Swimming,
-        'RUN': Running,
-        'WLK': SportsWalking
-    }
-    package = type_of_training[workout_type](*data)
-    return package
+    return TYPE_OF_TRAININGS[workout_type](*data)
 
 
 def main(training: Training) -> None:
