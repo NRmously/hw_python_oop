@@ -34,24 +34,20 @@ class Training:
 
     def get_distance(self) -> float:
         """Получить дистанцию в км."""
-
         distance = self.action * self.LEN_STEP / self.M_IN_KM
         return distance
 
     def get_mean_speed(self) -> float:
         """Получить среднюю скорость движения."""
-
         mean_speed = self.get_distance() / self.duration
         return mean_speed
 
     def get_spent_calories(self) -> float:
         """Получить количество затраченных калорий."""
-
         raise NotImplementedError('Необходимо переопределить метод')
 
     def show_training_info(self) -> InfoMessage:
         """Вернуть информационное сообщение о выполненной тренировке."""
-
         training_type = type(self).__name__
         duration = self.duration
         distance = self.get_distance()
@@ -125,13 +121,11 @@ TYPE_OF_TRAININGS: dict[str, type[Training]] = {'SWM': Swimming,
 
 def read_package(workout_type: str, data: list[float]) -> Training:
     """Прочитать данные полученные от датчиков."""
-
     return TYPE_OF_TRAININGS[workout_type](*data)
 
 
 def main(training: Training) -> None:
     """Главная функция."""
-
     info = training.show_training_info()
     print_info = print(info.get_message())
     return print_info
